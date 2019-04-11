@@ -80,8 +80,17 @@ link_go_binary() {
   if [ ! -f $2 ]
   then
     ln -s $1 $2
+    echo "Go binary linked into /usr/local/bin"
   else
     echo "Go binary already linked in /usr/local/bin"
+  fi
+}
+
+remove_temporary_files() {
+  if [ -f $1 ]
+  then
+    rm $1
+    echo "Removed temporary resources: $1"
   fi
 }
 
@@ -108,9 +117,8 @@ if extract_go_package_to_target "$GO_TMP_DIR/$GO_FILENAME" "$GO_PATH"
 then
   setup_go_environment
   link_go_binary "/usr/local/go/bin/go" "/usr/local/bin/go"
-  echo "Golang $GO_VERSION installed successfully!"
-  exit 0
-else
-  # cleanup
-  exit 1
 fi
+
+remove_temporary_files "$GO_TMP_DIR/$GO_FILENAME"
+echo ""
+echo "Golang $GO_VERSION installed successfully!"
