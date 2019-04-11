@@ -16,6 +16,16 @@ echo_stderr() {
   (>&2 echo $@)
 }
 
+run_as_root() {
+  if [ "$UID" -ne 0 ]
+  then
+    sudo "$@"
+  else
+    "$@"
+  fi
+  return $?
+}
+
 verify_checksum256() {
   checksum=$1
   file=$2
@@ -24,12 +34,8 @@ verify_checksum256() {
 
   if [ "$checksum" = "${computed[0]}" ]
   then
-    echo "Checksum verified $checksum"
     return 0
   else
-    echo_stderr "Checksum values are not equal." 
-    echo_stderr "Expected: $checksum"
-    echo_stderr "Received: ${computed[0]}"
     return 1
   fi
 }
@@ -37,9 +43,9 @@ verify_checksum256() {
 go_version_installed() {
   if [ "go$1" != "$( gv=($(command -v go &> /dev/null && go version)); echo "${gv[2]-}" )" ]
   then
-    return 0
-  else
     return 1
+  else
+    return 0 
   fi
 }
 
@@ -54,58 +60,46 @@ remote_file_to_target() {
 }
 
 extract_go_package_to_target() {
-  tar -C $2 -xzf $1
-  if [ $? -eq 0 ]
+  run_as_root tar -C $2 -xzf $1
+  if [ "$?" -eq 0 ]
   then
-    echo "Installed $1 to $2/go"
-    return 0
-  else
-    echo_stderr "Unable to extract file to $2. Exiting..."
-    return 1
+    run_as_root chown --recursive "root:staff" "$GO_PATH/go"
   fi
 }
 
 setup_go_environment() {
-  echo "Setting up .zshrc with GOROOT, GOPATH and adding GOROOT/bin to PATH"
   # this assumes zsh for now
   echo "" >> ~/.zshrc
   echo "# Golang configuration -- created by golang install.sh" >> ~/.zshrc
   echo "export GOROOT=/usr/local/go" >> ~/.zshrc
   echo "export GOPATH=\$HOME/go" >> ~/.zshrc
+  echo "export PATH=\$PATH:\$GOROOT/bin" >> ~/.zshrc
 
-  echo "Environment configured. Run source ~/.zshrc to load new configuration"
-}
-
-link_go_binary() {
-  if [ ! -f $2 ]
-  then
-    ln -s $1 $2
-    echo "Go binary linked into /usr/local/bin"
-  else
-    echo "Go binary already linked in /usr/local/bin"
-  fi
 }
 
 remove_temporary_files() {
   if [ -f $1 ]
   then
     rm $1
-    echo "Removed temporary resources: $1"
   fi
 }
 
+# 1. Check go version
 if go_version_installed $GO_VERSION
 then
   echo "Go version found"
   exit 0
 fi
 
+# 2. Download and verify Golang binary tarball
 if remote_file_to_target $GO_URL "$GO_TMP_DIR/$GO_FILENAME"
 then
   if verify_checksum256 "${GO_VERSION_CHECKSUM}" "$GO_TMP_DIR/$GO_FILENAME"
   then
-    echo "Download completed and verified."
+    echo "Download completed!"
+    echo "Checksum verified: $GO_VERSION_CHECKSUM"
   else
+    echo_stderr "Checksum verfication failed!"
     exit 1
   fi
 else
@@ -113,12 +107,24 @@ else
   exit 1
 fi
 
-if extract_go_package_to_target "$GO_TMP_DIR/$GO_FILENAME" "$GO_PATH"
+# 3. Extract tarball to usr/local
+extract_go_package_to_target "$GO_TMP_DIR/$GO_FILENAME" "$GO_PATH"
+if [ "$?" -eq 0 ]
 then
-  setup_go_environment
-  link_go_binary "/usr/local/go/bin/go" "/usr/local/bin/go"
+  echo "Installed Golang package $GO_TMP_DIR/$GO_FILENAME to $GO_PATH/go"
+else
+  echo_stderr "Unable to extract file to $2. Exiting..."
+  exit 1
 fi
 
+# 4. Setup environment
+echo "Setting up .zshrc with GOROOT, GOPATH and adding GOROOT/bin to PATH"
+setup_go_environment
+echo "Environment configured. Run source ~/.zshrc to load new configuration"
+
+# 5. Clean up
 remove_temporary_files "$GO_TMP_DIR/$GO_FILENAME"
+echo "Removed temporary resources from: $GO_TMP_DIR"
+
 echo ""
 echo "Golang $GO_VERSION installed successfully!"
