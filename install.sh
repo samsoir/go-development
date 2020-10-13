@@ -3,11 +3,11 @@
 set -o errexit
 set -o nounset
 
-GO_VERSION='1.14.6'
+GO_VERSION='1.15.2'
 GO_TMP_DIR='/tmp'
 GO_ARCH='amd64'
 GO_OS='linux'
-GO_VERSION_CHECKSUM='5c566ddc2e0bcfc25c26a5dc44a440fcc0177f7350c1f01952b34d5989a0d287'
+GO_VERSION_CHECKSUM='b49fda1ca29a1946d6bb2a5a6982cf07ccd2aba849289508ee0f9918f6bb4552'
 GO_FILENAME="go${GO_VERSION}.${GO_OS}-${GO_ARCH}.tar.gz"
 GO_URL="https://dl.google.com/go/${GO_FILENAME}"
 GO_PATH='/usr/local'
