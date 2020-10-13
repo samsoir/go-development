@@ -1,7 +1,7 @@
 DOCKER_BUILD_OPTS    :=--no-cache
 DOCKER_BUILD_REPO    :=samsoir/alpine-shunit2
 DOCKER_BUILD_LATEST  :=latest
-DOCKER_BUILD_VERSION :=1.0
+DOCKER_BUILD_VERSION :=1.1
 
 .PHONY: test build-base push 
 

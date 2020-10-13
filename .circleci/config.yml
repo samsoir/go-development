@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: samsoir/alpine-shunit2:1.0
+      - image: samsoir/alpine-shunit2:1.1
         auth:
           username: samsoir
           password: $DOCKERHUB_PASSWORD
