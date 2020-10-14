@@ -1,8 +1,8 @@
 version: 2.1
 jobs:
-  build:
+  test:
     docker:
-      - image: samsoir/alpine-shunit2:1.2
+      - image: samsoir/debian-shunit2:1.0
         auth:
           username: samsoir
           password: $DOCKERHUB_PASSWORD
@@ -13,13 +13,12 @@ jobs:
           command: |
             bash install.sh
             ln -s /usr/local/go/bin/go /usr/local/bin/go
-            echo $PATH
-      - run:
-          name: Verfiy Go installed
-          command: |
-            ls -la /usr/local/go/bin
-            go version
       - run:
           name: Test Golang Version installed
           command: |
             examples/test_go_version.sh
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
