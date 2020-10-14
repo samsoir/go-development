@@ -9,6 +9,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Golang
+          command: |
+            bash install.sh
+      - run:
           name: Run Example Test
           command: |
             examples/equality_test.sh

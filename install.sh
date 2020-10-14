@@ -63,7 +63,7 @@ extract_go_package_to_target() {
   run_as_root tar -C $2 -xzf $1
   if [ "$?" -eq 0 ]
   then
-    run_as_root chown --recursive "root:staff" "$GO_PATH/go"
+    run_as_root chown --recursive "root:root" "$GO_PATH/go"
   fi
 }
 
@@ -88,7 +88,7 @@ remove_temporary_files() {
 if go_version_installed $GO_VERSION
 then
   echo "Go version found"
-  exit 0
+  exit 1
 fi
 
 # 2. Download and verify Golang binary tarball
@@ -100,11 +100,11 @@ then
     echo "Checksum verified: $GO_VERSION_CHECKSUM"
   else
     echo_stderr "Checksum verfication failed!"
-    exit 1
+    exit 2
   fi
 else
   echo_stderr "Download failed!"
-  exit 1
+  exit 3
 fi
 
 # 3. Extract tarball to usr/local
@@ -114,7 +114,7 @@ then
   echo "Installed Golang package $GO_TMP_DIR/$GO_FILENAME to $GO_PATH/go"
 else
   echo_stderr "Unable to extract file to $2. Exiting..."
-  exit 1
+  exit 4
 fi
 
 # 4. Setup environment
@@ -128,3 +128,5 @@ echo "Removed temporary resources from: $GO_TMP_DIR"
 
 echo ""
 echo "Golang $GO_VERSION installed successfully!"
+
+exit 0
