@@ -4,7 +4,7 @@ DOCKER_BUILD_LATEST  :=latest
 DOCKER_BUILD_VERSION :=1.0
 DOCKER_TEST_NAME     :=go-development-test
 
-.PHONY: test build-base push 
+.PHONY: test build-base push push-latest install remove
 
 test:
 	docker build $(DOCKER_BUILD_OPTS) -f .docker/Dockerfile.test -t $(DOCKER_TEST_NAME) .
@@ -24,3 +24,11 @@ push:
 push-latest:
 	@echo "Pushing latest container to Dockerhub $(DOCKER_BUILD_REPO)"
 	docker push $(DOCKER_BUILD_REPO):$(DOCKER_BUILD_LATEST)
+
+install:
+	@echo "Installing Go"
+	./install.sh
+
+remove:
+	@echo "Removing Go"
+	./uninstall.sh
