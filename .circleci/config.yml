@@ -12,7 +12,14 @@ jobs:
           name: Install Golang
           command: |
             bash install.sh
+            ln -s /usr/local/go/bin/go /usr/local/bin/go
+            echo $PATH
       - run:
-          name: Run Example Test
+          name: Verfiy Go installed
           command: |
-            examples/equality_test.sh
+            ls -la /usr/local/go/bin
+            go version
+      - run:
+          name: Test Golang Version installed
+          command: |
+            examples/test_go_version.sh
