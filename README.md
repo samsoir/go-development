@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/samsoir/go-development/tree/master.svg?style=shield)](https://circleci.com/gh/samsoir/go-development/tree/master)
+
 # Install Golang
 
 This repository installs a linux binary of Golang. It is designed to be used
