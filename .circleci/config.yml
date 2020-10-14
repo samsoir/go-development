@@ -1,19 +1,24 @@
 version: 2.1
 jobs:
-  build:
+  test:
     docker:
-      - image: alpine:3.7
+      - image: samsoir/debian-shunit2:1.0
         auth:
           username: samsoir
           password: $DOCKERHUB_PASSWORD
     steps:
+      - checkout
       - run:
-          name: The First Step
+          name: Install Golang
           command: |
-            echo 'Hello, World!'
-            echo 'This is the delivery pipeline'
+            bash install.sh
+            ln -s /usr/local/go/bin/go /usr/local/bin/go
       - run:
-          name: Code Has Arrived
+          name: Test Golang Version installed
           command: |
-            ls -al
-            echo '^^^That should look familiar^^^'
+            examples/test_go_version.sh
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
