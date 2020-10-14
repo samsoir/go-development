@@ -21,10 +21,22 @@ git clone git@github.com:samsoir/go-development.git
 go-development/install.sh
 ```
 
+Or use `make` if that is your jam!
+
+```
+make install
+```
+
 ## To uninstall Go language
 
 ```
 go-development/uninstall.sh
+```
+
+Or use
+
+```
+make remove
 ```
 
 # Current Version
