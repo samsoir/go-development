@@ -2,10 +2,19 @@
 # file: examples/test_go_version
 
 EXPECTED_GO_VERSION='go version go1.15.2 linux/amd64'
+GO_INSTALL_LOCATION='/usr/local/go'
 
-testGoVersion() {
-  go_version=$(/usr/local/go/bin/go version)
-  assertEquals 'Go versions did not match' "$EXPECTED_GO_VERSION" "$go_version"
+testGoInstalledVersion() {
+  go_version=$($GO_INSTALL_LOCATION/bin/go version)
+  assertEquals 'Golang version incorrect' "$EXPECTED_GO_VERSION" "$go_version"
+}
+
+testGoUninstallNoVersion() {
+  $(bash uninstall.sh)
+  set -e
+
+  go_version=$($GO_INSTALL_LOCATION/bin/go version)
+  assertFalse "go cmd should not be installed" $?
 }
 
 . shunit2

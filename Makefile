@@ -11,7 +11,7 @@ test:
 	docker run --name $(DOCKER_TEST_NAME) --rm -d -t $(DOCKER_TEST_NAME) /bin/bash
 	docker exec $(DOCKER_TEST_NAME) ./install.sh && echo "PATH=\$PATH:/usr/local/bin/go" >> ~/.bashrc
 	docker exec $(DOCKER_TEST_NAME) examples/test_go_version.sh
-	docker container kill $(DOCKER_TEST_NAME)
+	docker stop $(DOCKER_TEST_NAME)
 
 build-base: 
 	@echo "Building Docker container"
