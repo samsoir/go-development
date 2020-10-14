@@ -42,6 +42,26 @@ then create a branch and follow the standard Github Flow process. When you
 are ready create a Pull Request against the main branch in maintainer
 project.
 
+# Testing
+
+This project has tests that are automatically executed by CircleCI on each
+commit and pull request.
+
+The tests are executed using the [shUnit2 framework](https://github.com/kward/shunit2)
+created by Katie Ward.
+
+Testing is using an outside-in approach, where the expected result of each
+action is tested, rather than the units of the functions themselves.
+
+## Running Tests
+
+Tests are run in a docker container using make command
+
+```
+make test
+```
+
 # License
 
-Licensed under opensource MIT License. Terms included in LICENSE file.
+Licensed under opensource MIT License. Terms included in [LICENSE](https://github.com/samsoir/go-development/blob/master/LICENSE) 
+file.
