@@ -1,7 +1,7 @@
 #! /bin/sh
 # file: examples/test_go_version
 
-EXPECTED_GO_VERSION='go version go1.15.16 linux/amd64'
+EXPECTED_GO_VERSION='go version go1.15.6 linux/amd64'
 GO_INSTALL_LOCATION='/usr/local/go'
 
 testGoInstalledVersion() {
